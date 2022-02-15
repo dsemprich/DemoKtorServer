@@ -4,6 +4,7 @@ import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.serialization.Serializable
 
 fun Application.configureRouting() {
     routing {
@@ -32,9 +33,16 @@ fun Application.configureRouting() {
                 call.respond(message = "${e.message}", status = HttpStatusCode.BadRequest)
             }
         }
+        get("/redirect") {
+            call.respondRedirect(url = "/moved", permanent = false)
+        }
+        get("/moved") {
+            call.respondText("You have been successfully redirected!")
+        }
     }
 }
 
+@Serializable
 data class Person(
     val name: String,
     val age: Int
