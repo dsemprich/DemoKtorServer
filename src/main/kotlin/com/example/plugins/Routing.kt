@@ -1,47 +1,47 @@
 package com.example.plugins
 
 import io.ktor.application.*
-import io.ktor.http.*
+import io.ktor.html.*
+import io.ktor.http.content.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.html.*
 import kotlinx.serialization.Serializable
 
 fun Application.configureRouting() {
     routing {
+
+        static {
+            resources("static")
+        }
         get("/") {
             call.respondText("Hello World!")
         }
-        get("/users/{username}") {
-            val username = call.parameters["username"]
-            val header = call.request.headers["Connection"]
-            if (username == "Admin") {
-                call.response.header(name = "CustomHeader", value = "Admin")
-                call.respond(message = "Hello, $username", status = HttpStatusCode.OK)
-            }
-            call.respondText("Greetings, $username with header: $header")
-        }
-        get("/user") {
+        get("/welcome") {
             val name = call.request.queryParameters["name"]
-            val age = call.request.queryParameters["age"]
-            call.respondText("Hi, my name is $name, I'm  $age years old!")
-        }
-        get("/person") {
-            try {
-                val person = Person("John", 26)
-                call.respond(message = person, status = HttpStatusCode.OK)
-            } catch (e: Exception) {
-                call.respond(message = "${e.message}", status = HttpStatusCode.BadRequest)
+            call.respondHtml {
+                head {
+                    title {
+                        +"Custom Title"
+                    }
+                }
+                body {
+                    if (name.isNullOrEmpty()) {
+                        h3 { +"Welcome!" }
+                    } else {
+                        h3 { +"Welcome, $name" }
+                    }
+                    p { +"Current directory is: ${System.getProperty("user.dir")}" }
+                    img(src = "logo.png")
+                }
             }
         }
-        get("/redirect") {
-            call.respondRedirect(url = "/moved", permanent = false)
-        }
-        get("/moved") {
-            call.respondText("You have been successfully redirected!")
-        }
+
+
     }
 }
 
+@Suppress("unused")
 @Serializable
 data class Person(
     val name: String,
