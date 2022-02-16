@@ -1,10 +1,15 @@
 package com.example.plugins
 
+import com.example.routes.getAllHeroes
+import com.example.routes.root
+import com.example.routes.searchHeroes
 import io.ktor.application.*
+import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import kotlinx.serialization.Serializable
+import javax.naming.AuthenticationException
 
 fun Application.configureRouting() {
     routing {
@@ -12,18 +17,11 @@ fun Application.configureRouting() {
         static {
             resources("static")
         }
-        get("/") {
-            call.respondText("Hello World!")
+        static("/images") {
+            resources("images")
         }
-        get("/welcome") {
-            call.respondText(" Welcome!")
-        }
+        root()
+        getAllHeroes()
+        searchHeroes()
     }
 }
-
-@Suppress("unused")
-@Serializable
-data class Person(
-    val name: String,
-    val age: Int
-)
