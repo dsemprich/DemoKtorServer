@@ -1,7 +1,7 @@
 
 val kotlinVersion: String = "1.5.31"
-val ktorVersion: String = "1.6.4"
-val logbackVersion: String = "1.2.5"
+val ktorVersion: String = "1.6.7"
+val logbackVersion: String = "1.2.10"
 val koinVersion: String = "3.1.4"
 
 plugins {

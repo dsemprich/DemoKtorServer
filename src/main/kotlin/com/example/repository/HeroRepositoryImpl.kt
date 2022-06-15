@@ -155,7 +155,7 @@ class HeroRepositoryImpl: HeroRepository {
         Hero(
             id = 6,
             name = "Hulk",
-            image = "hulk-01.jpg",
+            image = "/images/hulk-01.jpg",
             about = "Scientist Bruce Banner’s inner turmoil transforms him into the mean, green rage machine called the Hulk.",
             rating = 4.9,
             power = 95,
@@ -274,7 +274,7 @@ class HeroRepositoryImpl: HeroRepository {
         Hero(
             id = 10,
             name = "Captain Marvel",
-            image = "cpt_marvel-01.jpg",
+            image = "/images/cpt_marvel-01.jpg",
             about = "Former Air Force pilot and intelligence agent Carol Danvers pursued her dream of space exploration as a NASA employee, but her life forever changed when she was accidentally transformed into a human-Kree hybrid with extraordinary powers. Now, Carol is the latest warrior to embrace the mantle of Captain Marvel, and she has taken her place as one of the world’s mightiest heroes.",
             rating = 3.9,
             power = 98,
@@ -446,26 +446,16 @@ class HeroRepositoryImpl: HeroRepository {
             message = "ok",
             prevPage = calculatePage(page = page)[PREVIOUS_PAGE_KEY],
             nextPage = calculatePage(page = page)[NEXT_PAGE_KEY],
-            heroes = heroes[page]!!
+            heroes = heroes[page]!!,
+            lastUpdated = System.currentTimeMillis()
         )
     }
 
     private fun calculatePage(page: Int): Map<String, Int?> {
-        var prevPage: Int? = page
-        var nextPage: Int? = page
-        if (page in 1..4) {
-            nextPage = nextPage?.plus(1)
-        }
-        if (page in 2..5) {
-            prevPage = prevPage?.minus(1)
-        }
-        if (page == 1) {
-            prevPage = null
-        }
-        if (page == 5) {
-            nextPage = null
-        }
-        return mapOf(PREVIOUS_PAGE_KEY to prevPage, NEXT_PAGE_KEY to nextPage)
+        return mapOf(
+            PREVIOUS_PAGE_KEY to if (page in 2..5) page.minus(1) else null,
+            NEXT_PAGE_KEY to if (page in 1..4) page.plus(1) else null
+        )
     }
 
     override suspend fun searchHeroes(name: String?): ApiResponse {

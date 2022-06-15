@@ -53,15 +53,15 @@ class ApplicationTest  {
                         HttpStatusCode.OK,
                         response.status()
                     )
+                    val actual = Json.decodeFromString<ApiResponse>(response.content.toString())
                     val expected = ApiResponse(
                         success = true,
                         message = "ok",
                         prevPage = calculatePage(page)["prevPage"],
                         nextPage = calculatePage(page)["nextPage"],
-                        heroes = heroes[page - 1]
+                        heroes = heroes[page - 1],
+                        lastUpdated = actual.lastUpdated
                     )
-                    val actual = Json.decodeFromString<ApiResponse>(response.content.toString())
-
                     assertEquals(
                         expected,
                         actual
@@ -215,21 +215,10 @@ class ApplicationTest  {
     }
 
     private fun calculatePage(page: Int): Map<String, Int?> {
-        var prevPage: Int? = page
-        var nextPage: Int? = page
-        if (page in 1..4) {
-            nextPage = nextPage?.plus(1)
-        }
-        if (page in 2..5) {
-            prevPage = prevPage?.minus(1)
-        }
-        if (page == 1) {
-            prevPage = null
-        }
-        if (page == 5) {
-            nextPage = null
-        }
-        return mapOf(PREVIOUS_PAGE_KEY to prevPage, NEXT_PAGE_KEY to nextPage)
+        return mapOf(
+            PREVIOUS_PAGE_KEY to if (page in 2..5) page.minus(1) else null,
+            NEXT_PAGE_KEY to if (page in 1..4) page.plus(1) else null
+        )
     }
 
 }
